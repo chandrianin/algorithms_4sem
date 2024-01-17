@@ -45,3 +45,18 @@ void coordinatesInput(std::vector<std::pair<double, double>> &inputVector) {
         }
     }
 }
+
+//  Возвращает true, если C находится левее вектора AB, и false в противном случае
+bool leftOrRight(std::pair<double, double> A, std::pair<double, double> B, std::pair<double, double> C) {
+
+    // Возвращает значение функции-вектора AB в точке x
+    auto func{[&B, &A](double x) { return (B.second - A.second) * (x - A.first) / (B.first - A.first) + A.second; }};
+
+    // true, если вектор AB направлен слева направо, false в противном случае
+    bool funcDirection = B.first > A.first;
+
+    // true, если точка C находится выше вектора AB, false в противном случае
+    bool verticalPosition = C.second > func(C.first);
+
+    return funcDirection == verticalPosition;
+}
