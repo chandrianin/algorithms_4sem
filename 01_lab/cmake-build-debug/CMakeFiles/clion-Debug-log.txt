@@ -1,4 +1,0 @@
-C:\Users\TbMA3\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/TbMA3/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -G Ninja -S D:\algorithms_4sem\01_lab -B D:\algorithms_4sem\01_lab\cmake-build-debug
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: D:/algorithms_4sem/01_lab/cmake-build-debug
