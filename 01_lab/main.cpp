@@ -14,5 +14,8 @@ int main() {
     catch (std::exception &error) {
         std::cerr << error.what() << std::endl;
     }
-    std::cout << leftOrRight(coordinates[0], coordinates[1], coordinates[2]) << std::endl;
+    auto outVector = grahamScan(coordinates);
+    for (auto dot : outVector) {
+        std::cout << "(" << dot.first << ";" << dot.second << ")" << std::endl;
+    }
 }
