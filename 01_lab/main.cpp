@@ -15,7 +15,7 @@ int main() {
         std::cerr << error.what() << std::endl;
     }
     auto outVector = grahamScan(coordinates);
-    for (auto dot : outVector) {
+    for (auto dot: outVector) {
         std::cout << "(" << dot.first << ";" << dot.second << ")" << std::endl;
     }
 }
