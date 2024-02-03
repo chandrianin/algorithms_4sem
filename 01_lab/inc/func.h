@@ -81,21 +81,14 @@ std::vector<std::pair<double, double>> grahamScan(const std::vector<std::pair<do
             std::swap(indices[0], indices[i]);
         }
     }
-
-//    std::vector<int> delIndices{};
-//    std::vector<unsigned int> delPairs{};
     double minY = indices[0];
     double maxY = indices[0];
     for (int i = 0; i < indices.size(); i++) {
-        if (coordinates[indices[i]].first == inputCoordinates[indices[0]].first &&
-            coordinates[indices[i]].second != inputCoordinates[indices[0]].second) {
+        if (coordinates[i].first == inputCoordinates[indices[0]].first &&
+            coordinates[i].second != inputCoordinates[indices[0]].second) {
             if (coordinates[static_cast<int>(minY)].second > coordinates[i].second) {
                 minY = i;
             }
-//            coordinates.erase(coordinates.begin() + indices[i]);
-//            indices[i] = -1;
-//            delIndices.push_back(i);
-//            delPairs.push_back(indices[i]);
         }
     }
     double tempX = coordinates[static_cast<int>(maxY)].first;
@@ -119,7 +112,6 @@ std::vector<std::pair<double, double>> grahamScan(const std::vector<std::pair<do
             std::swap(indices[0], indices[i]);
         }
     }
-//    std::sort(delPairs.begin(), delPairs.end());
 
 
 
@@ -142,7 +134,6 @@ std::vector<std::pair<double, double>> grahamScan(const std::vector<std::pair<do
         while (!leftOrRight(coordinates[resultIndices[resultIndices.size() - 2]],
                             coordinates[resultIndices[resultIndices.size() - 1]], coordinates[indices[i]])) {
             resultIndices.pop_back();
-//            if (resultIndices.size() == 1) {resultIndices.push_back(indices[i]); break;}
         }
         resultIndices.push_back(indices[i]);
     }
