@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <queue>
 
 std::map<int, std::map<int, int>> read(const std::string &path) {
     auto resultMap = std::map<int, std::map<int, int>>{};
@@ -22,7 +23,6 @@ std::map<int, std::map<int, int>> read(const std::string &path) {
 
         }
         for (const auto &dot: tempDots) {
-//            tempDots.clear();
             std::getline(in, tempString);
             std::istringstream ss(tempString);
             ss >> tempNumber;
@@ -48,6 +48,7 @@ std::map<int, std::map<int, int>> read(const std::string &path) {
 
 std::map<int, int> BreadthFirstSearch(const int rootDot, const std::string &path) {
     auto input = read(path);
+
     std::map<int, int> distanceMap{};
     for (const auto &[dot, distances]: input) {
         if (dot == rootDot) {
@@ -56,58 +57,20 @@ std::map<int, int> BreadthFirstSearch(const int rootDot, const std::string &path
             distanceMap.insert({dot, -1});
         }
     }
+
+    std::queue<int> allDots{};
+    allDots.push(rootDot);
+
     bool flag = true;
     int currentDistance = 0;
-    while (flag) {
-        flag = false;
-        for (const auto &[dot, distance]: distanceMap) { // перебор по словарю с точками и дистанциями до них
-            if (distance == currentDistance) { // если нашли точку с необходимой дистанцией до нее
-                for (const auto &[destinationDot, destinationDistance]: input[dot]) { // то делаем перебор по точкам, в которые можно попасть из текущей точки
-                    if (destinationDistance > 0 &&
-                        // если для выбранной точки: минимальная дистанция положительная и выполняется одно из двух условий
-                        (distanceMap[destinationDot] > currentDistance + destinationDistance ||
-                         // 1) минимальная дистанция до выбранной точки больше полученной сейчас
-                         distanceMap[destinationDot] == -1)) {
-                        // 2) дистанция до точки не была найдена
-                        distanceMap[destinationDot] = currentDistance +
-                                                      destinationDistance; // тогда присваиваем дистанцию до выбранной точки с отсчетом от прошлой точки
-                    }
-                }
-            }
-        }
-        currentDistance++;
 
-        std::map<int, int> maxDistances{};
-        std::pair<int, int> maxDistanceDot{0, 0};
-        for (const auto &[dot, distance]: distanceMap) {
-            if (distance > maxDistanceDot.second) {
-                maxDistanceDot.first = dot;
-                maxDistanceDot.second = distance;
-            }
-        }
-        for (const auto &dot: distanceMap) {
-            if (dot.second == maxDistanceDot.second) {
-                maxDistances.insert(dot);
-            }
-        }
-        for (const auto &[dot, distance]: maxDistances) {
-            bool tempFlag = true;
-            for (const auto &targetDistance: input[dot]) {
-                if (targetDistance.second > 0) {
-                    for (const auto &distanceDot: distanceMap) {
-                        if (targetDistance.first == distanceDot.first && distanceDot.second == -1) {
-                            flag = true;
-                            tempFlag = false;
-                            break;
-                        }
-                    }
-                    if (!tempFlag) {
-                        break;
-                    }
-                }
-            }
-            if (!tempFlag) {
-                break;
+    while (!allDots.empty()) {
+        int currentDot = allDots.front();
+        allDots.pop();
+        for (const auto &[otherDot, distance]: input[currentDot]) {
+            if (distance != 0 && distanceMap[otherDot] == -1) {
+                distanceMap[otherDot] = distanceMap[currentDot] + 1;
+                allDots.push(otherDot);
             }
         }
     }
@@ -125,11 +88,12 @@ std::vector<std::vector<int>> findAllDots(const std::string &path) {
     }
 
     std::vector<int> tempGoodDots{}; // вектора из группы связанных точек
-//    int count = 0;
     auto distanceMap = BreadthFirstSearch(allDots.front(),
                                           path); // создаем map точек и расстояния до них, начиная отсчет с первой точки
 
     std::vector<int> allGoodDots{};
+
+    // поиск компонентов связности
     do {
         allDots.clear();
         for (const auto &[dot, distance]: distanceMap) { // разделяем точки на хорошие и все остальные
@@ -156,7 +120,6 @@ std::vector<std::vector<int>> findAllDots(const std::string &path) {
             distanceMap = BreadthFirstSearch(allDots.front(),
                                              path); // то делаем поиск в ширину начиная с точки, до которой мы не дотянулись раньше
         }
-//        allDots.clear();
 
         if (!tempGoodDots.empty()) {
 
@@ -167,6 +130,8 @@ std::vector<std::vector<int>> findAllDots(const std::string &path) {
             flag = false; // конец цикла, если точки закончились
         }
     } while (flag);
+
+    // проверка на наличие путей, не найденных ранее
     for (int i = 0; i < result.size() - 1; i++) { // перебирает векторы, точки которых будем сравнивать с
         bool tempFlag = true;
         for (int j = i + 1; j < result.size(); j++) { // точками векторов, которые перебираем тут

@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.27)
-project(03_lab)
+project(04_05_lab)
 
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(inc)
+include_directories(googletest/googletest/include)
+#include_directories(googletest/googlemock/include)
 
-add_executable(03_lab
+enable_testing()
+add_subdirectory(googletest)
+
+add_executable(04_05_lab
         inc/func.h
+        inc/googleTestFunc.h
         main.cpp)
+
+target_link_libraries(04_05_lab gtest_main gmock_main)
 
 FILE(COPY "data/input.txt" DESTINATION "data/")

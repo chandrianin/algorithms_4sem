@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 std::map<int, std::map<int, int>> read(const std::string &path) {
     auto resultMap = std::map<int, std::map<int, int>>{};
@@ -46,6 +47,81 @@ std::map<int, std::map<int, int>> read(const std::string &path) {
     return resultMap;
 }
 
+class Dot {
+private:
+    unsigned int _value;
+    std::vector<Dot *> _neighboursDots;
+
+    void deleteLink(Dot *otherDot) {
+        _neighboursDots.erase(std::find(_neighboursDots.cbegin(), _neighboursDots.cend(), otherDot));
+    }
+
+public:
+
+    explicit Dot(unsigned int value) : _value(value) {}
+
+    ~Dot() {
+        for (auto *otherDot: _neighboursDots) {
+            otherDot->deleteLink(this);
+        }
+    }
+
+    [[nodiscard]] unsigned int value() const {
+        return _value;
+    }
+
+    [[nodiscard]]unsigned int neighboursCount(){
+        return _neighboursDots.size();
+    }
+
+    [[nodiscard]] bool isLinked(const Dot *otherDot) const {
+        return std::find(_neighboursDots.cbegin(), _neighboursDots.cend(), otherDot) != _neighboursDots.cend() &&
+               std::find(otherDot->_neighboursDots.cbegin(), otherDot->_neighboursDots.cend(), this) !=
+               otherDot->_neighboursDots.cend();
+    }
+
+    void addLink(Dot *otherDot) {
+        if (!this->isLinked(otherDot)) {
+            _neighboursDots.push_back(otherDot);
+        }
+        if (!otherDot->isLinked(this)) {
+            otherDot->_neighboursDots.push_back(this);
+        }
+    }
+};
+
+class Graph {
+private:
+    std::vector<Dot *> _dots;
+public:
+    [[nodiscard]] Dot *get(unsigned int value) {
+        auto it = std::find_if(_dots.cbegin(), _dots.cend(),
+                               [&value](Dot *currentDot) { return currentDot->value() == value; });
+        if (it == _dots.cend()) {
+            throw std::exception("Элемент не найден");
+        }
+        return _dots[it - _dots.cbegin()];
+    }
+
+    unsigned int size(){
+        return _dots.size();
+    }
+
+    void addDot(unsigned int value) {
+        try {
+            Dot *temp = get(value);
+        } catch (const std::exception &error) {
+            _dots.push_back(new Dot(value));
+        }
+    }
+
+    void addEdge(unsigned firstValue, unsigned secondValue) {
+        addDot(firstValue);
+        addDot(secondValue);
+        get(firstValue)->addLink(get(secondValue));
+    }
+};
+
 std::map<int, int> depthFirstSearch(const int rootDot, const std::string &path) {
     auto input = read(path);
     std::map<int, int> distanceMap{};
@@ -57,61 +133,6 @@ std::map<int, int> depthFirstSearch(const int rootDot, const std::string &path) 
         }
     }
 
-//    bool flag = true;
-//    int currentDistance = 0;
-//    while (flag) {
-//        flag = false;
-//        for (const auto &[dot, distance]: distanceMap) { // перебор по словарю с точками и дистанциями до них
-//            if (distance == currentDistance) { // если нашли точку с необходимой дистанцией до нее
-//                for (const auto &[destinationDot, destinationDistance]: input[dot]) { // то делаем перебор по точкам, в которые можно попасть из текущей точки
-//                    if (destinationDistance > 0 &&
-//                        // если для выбранной точки: минимальная дистанция положительная и выполняется одно из двух условий
-//                        (distanceMap[destinationDot] > currentDistance + destinationDistance ||
-//                         // 1) минимальная дистанция до выбранной точки больше полученной сейчас
-//                         distanceMap[destinationDot] == -1)) {
-//                        // 2) дистанция до точки не была найдена
-//                        distanceMap[destinationDot] = currentDistance +
-//                                                      destinationDistance; // тогда присваиваем дистанцию до выбранной точки с отсчетом от прошлой точки
-//                    }
-//                }
-//            }
-//        }
-//        currentDistance++;
-//
-//        std::map<int, int> maxDistances{};
-//        std::pair<int, int> maxDistanceDot{0, 0};
-//        for (const auto &[dot, distance]: distanceMap) {
-//            if (distance > maxDistanceDot.second) {
-//                maxDistanceDot.first = dot;
-//                maxDistanceDot.second = distance;
-//            }
-//        }
-//        for (const auto &dot: distanceMap) {
-//            if (dot.second == maxDistanceDot.second) {
-//                maxDistances.insert(dot);
-//            }
-//        }
-//        for (const auto &[dot, distance]: maxDistances) {
-//            bool tempFlag = true;
-//            for (const auto &targetDistance: input[dot]) {
-//                if (targetDistance.second > 0) {
-//                    for (const auto &distanceDot: distanceMap) {
-//                        if (targetDistance.first == distanceDot.first && distanceDot.second == -1) {
-//                            flag = true;
-//                            tempFlag = false;
-//                            break;
-//                        }
-//                    }
-//                    if (!tempFlag) {
-//                        break;
-//                    }
-//                }
-//            }
-//            if (!tempFlag) {
-//                break;
-//            }
-//        }
-//    }
     return distanceMap;
 }
 
