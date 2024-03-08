@@ -12,7 +12,7 @@ add_subdirectory(googletest)
 
 add_executable(04_05_lab
         inc/func.h
-        inc/googleTestFunc.h
+        tests/test.h
         main.cpp)
 
 target_link_libraries(04_05_lab gtest_main gmock_main)

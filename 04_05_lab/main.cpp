@@ -2,7 +2,7 @@
 #include <func.h>
 #include <windows.h>
 #include <gtest/gtest.h>
-#include <googleTestFunc.h>
+#include "tests/test.h"
 
 std::string DESTINATION = "data/input.txt";
 

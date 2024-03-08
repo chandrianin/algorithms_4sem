@@ -7,46 +7,6 @@
 #include <sstream>
 #include <algorithm>
 
-std::map<int, std::map<int, int>> read(const std::string &path) {
-    auto resultMap = std::map<int, std::map<int, int>>{};
-    std::ifstream in(path);
-    if (in.good()) { // если все хорошо
-        std::string tempString;
-        std::vector<int> tempDots;
-
-        std::getline(in, tempString);
-        std::istringstream fss(tempString);
-        int tempNumber;
-
-        while (fss >> tempNumber) {
-            tempDots.push_back(tempNumber);
-
-        }
-        for (const auto &dot: tempDots) {
-//            tempDots.clear();
-            std::getline(in, tempString);
-            std::istringstream ss(tempString);
-            ss >> tempNumber;
-            if (tempNumber != dot) {
-                throw std::exception("Введены некорректные данные");
-            }
-            resultMap.insert({dot, std::map<int, int>{}});
-            int count = 0;
-            while (ss >> tempNumber) {
-                resultMap[dot].insert({tempDots[count++], tempNumber});
-            }
-            if (resultMap[dot].size() < tempDots.size()) {
-                std::string e = "Малое количество путей для точки";
-                e += std::to_string(dot);
-                throw std::out_of_range(e);
-            }
-
-        }
-    }
-    in.close();
-    return resultMap;
-}
-
 class Dot {
 private:
     unsigned int _value;
@@ -121,6 +81,46 @@ public:
         get(firstValue)->addLink(get(secondValue));
     }
 };
+
+std::map<int, std::map<int, int>> read(const std::string &path) {
+    auto resultMap = std::map<int, std::map<int, int>>{};
+    std::ifstream in(path);
+    if (in.good()) { // если все хорошо
+        std::string tempString;
+        std::vector<int> tempDots;
+
+        std::getline(in, tempString);
+        std::istringstream fss(tempString);
+        int tempNumber;
+
+        while (fss >> tempNumber) {
+            tempDots.push_back(tempNumber);
+
+        }
+        for (const auto &dot: tempDots) {
+//            tempDots.clear();
+            std::getline(in, tempString);
+            std::istringstream ss(tempString);
+            ss >> tempNumber;
+            if (tempNumber != dot) {
+                throw std::exception("Введены некорректные данные");
+            }
+            resultMap.insert({dot, std::map<int, int>{}});
+            int count = 0;
+            while (ss >> tempNumber) {
+                resultMap[dot].insert({tempDots[count++], tempNumber});
+            }
+            if (resultMap[dot].size() < tempDots.size()) {
+                std::string e = "Малое количество путей для точки";
+                e += std::to_string(dot);
+                throw std::out_of_range(e);
+            }
+
+        }
+    }
+    in.close();
+    return resultMap;
+}
 
 std::map<int, int> depthFirstSearch(const int rootDot, const std::string &path) {
     auto input = read(path);
