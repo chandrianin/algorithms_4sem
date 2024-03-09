@@ -4,11 +4,11 @@ project(04_05_lab)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(inc)
-include_directories(googletest/googletest/include)
+include_directories(gtest/googletest/include)
 #include_directories(googletest/googlemock/include)
 
 enable_testing()
-add_subdirectory(googletest)
+add_subdirectory(gtest)
 
 add_executable(04_05_lab
         inc/func.h
