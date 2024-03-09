@@ -12,7 +12,7 @@ int main() {
     ::testing::InitGoogleTest();
     ::testing::GTEST_FLAG(catch_exceptions) = false;
     return RUN_ALL_TESTS();
-    writeDistances(depthFirstSearch(4, DESTINATION));
-    std::cout << std::endl;
-    writeDots(findAllDots(DESTINATION));
+//    writeDistances(depthFirstSearch(4, DESTINATION));
+//    std::cout << std::endl;
+//    writeDots(findAllDots(DESTINATION));
 }

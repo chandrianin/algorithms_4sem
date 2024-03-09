@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gtest/gtest.h"
-#include "func.h"
+#include <func.h>
 
 
 TEST(DotTest, Links) {
@@ -40,4 +40,66 @@ TEST(GraphTest, Edges) {
     array->addDot(2);
     array->addEdge(1, 2);
     ASSERT_TRUE(array->get(1)->isLinked(array->get(2)));
+}
+
+TEST(GraphTest, FileRead1) {
+//   inputData:
+//      1 2 3
+//    1 0 1 0
+//    2 1 0 1
+//    3 0 1 0
+
+    auto testGraph = read("tests/testInput1.txt");
+    ASSERT_TRUE(testGraph->get(1)->isLinked(testGraph->get(2)));
+    ASSERT_TRUE(!testGraph->get(1)->isLinked(testGraph->get(3)));
+    ASSERT_TRUE(testGraph->get(3)->isLinked(testGraph->get(2)));
+}
+
+TEST(GraphTest, DFS1) {
+//   inputData:
+//      1 2 3
+//    1 0 1 0
+//    2 1 0 1
+//    3 0 1 0
+
+    auto testGraph = read("tests/testInput1.txt");
+    auto *result = testGraph->depthFirstSearch(1, 3);
+    ASSERT_EQ((*result)[0][0], 1);
+    ASSERT_EQ((*result)[0][1], 2);
+    ASSERT_EQ((*result)[0][2], 3);
+    ASSERT_EQ((*result).size(), 1);
+}
+
+TEST(GraphTest, FileRead2) {
+//   inputData:
+//      1 2 3
+//    1 0 1 1
+//    2 1 0 1
+//    3 1 1 0
+
+    auto testGraph = read("tests/testInput2.txt");
+    ASSERT_TRUE(testGraph->get(1)->isLinked(testGraph->get(2)));
+    ASSERT_TRUE(testGraph->get(1)->isLinked(testGraph->get(3)));
+    ASSERT_TRUE(testGraph->get(3)->isLinked(testGraph->get(2)));
+}
+
+TEST(GraphTest, DFS2) {
+//   inputData:
+//      1 2 3
+//    1 0 1 1
+//    2 1 0 1
+//    3 1 1 0
+
+    auto testGraph = read("tests/testInput2.txt");
+    auto *result = testGraph->depthFirstSearch(1, 3);
+
+
+    ASSERT_EQ((*result)[0][0], 1);
+    ASSERT_EQ((*result)[0][1], 2);
+    ASSERT_EQ((*result)[0][2], 3);
+
+    ASSERT_EQ((*result)[1][0], 1);
+    ASSERT_EQ((*result)[1][1], 3);
+
+    ASSERT_EQ((*result).size(), 2);
 }

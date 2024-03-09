@@ -18,3 +18,6 @@ add_executable(04_05_lab
 target_link_libraries(04_05_lab gtest_main gmock_main)
 
 FILE(COPY "data/input.txt" DESTINATION "data/")
+
+FILE(COPY "tests/testInput1.txt" DESTINATION "tests")
+FILE(COPY "tests/testInput2.txt" DESTINATION "tests")
