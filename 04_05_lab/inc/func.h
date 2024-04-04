@@ -60,8 +60,8 @@ private:
 
     void
     recursiveDepthFirstSearch(unsigned int currentDotValue, unsigned int endDotValue,
-                              std::vector<unsigned int> *visited = new std::vector<unsigned int>,
-                              std::vector<std::vector<unsigned int>> *routes = new std::vector<std::vector<unsigned int>>) const {
+                              std::vector<unsigned int> *visited,
+                              std::vector<std::vector<unsigned int>> *routes) const {
         visited->push_back(currentDotValue);
 
         if (currentDotValue == endDotValue) {
@@ -79,6 +79,11 @@ private:
     }
 
 public:
+    ~Graph() {
+        for (auto *dot: _dots) {
+            delete dot;
+        }
+    }
 
     [[nodiscard]] bool isDot(unsigned int value) const {
         auto it = std::find_if(_dots.cbegin(), _dots.cend(),
@@ -122,6 +127,52 @@ public:
 
         recursiveDepthFirstSearch(startDotValue, endDotValue, visited, routes);
         return routes;
+    }
+
+    [[nodiscard]] std::vector<std::vector<unsigned int>> *componentFind() {
+        auto *resultVisited = new std::vector<unsigned int>; // сборник всех посещенных точек для одного компонента
+        auto *components = new std::vector<std::vector<unsigned int>>; // сборник компонентов
+        auto *dots = new std::vector<unsigned int>; // сборник всех посещенных точек
+
+        auto *visited = new std::vector<unsigned int>;
+        auto *routes = new std::vector<std::vector<unsigned int>>;
+
+
+        for (const auto *startDot: _dots) {
+
+            // выход, если количество точек в компонентах достигло общего количества
+            if (dots->size() == this->size()) {
+                break;
+            }
+            for (const auto *endDot: _dots) {
+                // если точка уже была найдена, идем дальше
+                if (std::find(resultVisited->cbegin(), resultVisited->cend(), endDot->value()) !=
+                    resultVisited->cend()) {
+                    continue;
+                }
+
+                // ищем путь от startDot до endDot
+                recursiveDepthFirstSearch(startDot->value(), endDot->value(), visited, routes);
+
+                // новые точки (из routes) помещаем в resultVisited
+                if (!routes->empty()){
+                    for (const auto value: (*routes)[0]) {
+                        if (std::find(resultVisited->cbegin(), resultVisited->cend(), value) == resultVisited->cend()) {
+                            resultVisited->push_back(value);
+                            dots->push_back(value);
+                        }
+                    }
+                }
+
+
+                visited->clear();
+                routes->clear();
+            }
+
+            components->push_back(*resultVisited);
+            resultVisited->clear();
+        }
+        return components;
     }
 };
 
@@ -187,4 +238,3 @@ void writeDots(const std::vector<std::vector<int>> &distanceMap) {
     }
     out.close();
 }
-

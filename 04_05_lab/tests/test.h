@@ -103,3 +103,40 @@ TEST(GraphTest, DFS2) {
 
     ASSERT_EQ((*result).size(), 2);
 }
+
+TEST(GraphTest, ComponentsFind) {
+//    inputData:
+//      1 2 3 4 5 6 7
+//    1 0 0 0 0 0 0 0
+//    2 0 0 0 0 1 0 0
+//    3 0 0 0 0 0 1 0
+//    4 0 0 0 0 0 0 1
+//    5 0 1 0 0 0 0 1
+//    6 0 0 1 0 0 0 0
+//    7 0 0 0 1 1 0 0
+
+    auto testGraph = read("tests/testInput3.txt");
+    auto *components = testGraph->componentFind();
+    ASSERT_EQ(components->size(), 3);
+    auto const first = std::vector<int>{2, 4, 5, 7};
+    auto const second = std::vector<int>{3, 6};
+    auto const third = std::vector<int>{1};
+    for (auto &component: *components) {
+        switch (component.size()) {
+            case 4:
+                std::sort(component.begin(), component.end());
+                ASSERT_TRUE(component[0] == first[0] && component[1] == first[1] && component[2] == first[2] &&
+                            component[3] == first[3]);
+                break;
+            case 2:
+                std::sort(component.begin(), component.end());
+                ASSERT_TRUE(component[0] == second[0] && component[1] == second[1]);
+                break;
+            case 1:
+                ASSERT_TRUE(component[0] == third[0]);
+                break;
+            default:
+                ASSERT_TRUE(false);
+        }
+    }
+}

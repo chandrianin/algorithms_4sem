@@ -21,3 +21,4 @@ FILE(COPY "data/input.txt" DESTINATION "data/")
 
 FILE(COPY "tests/testInput1.txt" DESTINATION "tests")
 FILE(COPY "tests/testInput2.txt" DESTINATION "tests")
+FILE(COPY "tests/testInput3.txt" DESTINATION "tests")
